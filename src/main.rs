@@ -34,6 +34,45 @@ struct BlockHeader {
     extra_data: Vec<u8>,
 }
 
+struct Account {
+    nonce: u64,
+    balance: u64,
+    code_hash: String,
+    storage_root: String,
+}
+
+fn produce_block(){
+    todo!()
+}
+
+fn validate_block(){
+    todo!()
+}
+
+fn execute_transaction(){
+    todo!()
+}
+
+fn update_state(){
+    todo!()
+}
+
+fn store_block(){
+    todo!()
+}
+
+fn query_blockchain(){
+    todo!()
+}
+
+fn deploy_smart_contract(){
+    todo!()
+}
+
+fn consensus_mechanism(){
+    todo!()
+}
+
 fn main() {
     println!("Hello, world!");
 }
