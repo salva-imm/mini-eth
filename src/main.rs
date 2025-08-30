@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+use std::sync::{LazyLock, RwLock};
 
 struct Transaction {
     from: String,
@@ -41,6 +43,18 @@ struct Account {
     storage_root: String,
 }
 
+// Genesis block and state container
+
+static STATE: LazyLock<RwLock<HashMap<String, Block>>> = LazyLock::new(|| {
+    let mut m = HashMap::new();
+    m.insert("0x00".to_string(), Block {
+        header: "genesis_header".to_string(),
+        transactions: vec![],
+        receipts: vec![],
+    });
+    RwLock::new(m)
+});
+
 fn produce_block(){
     todo!()
 }
@@ -74,5 +88,24 @@ fn consensus_mechanism(){
 }
 
 fn main() {
-    println!("Hello, world!");
+    let state = STATE.read().unwrap();
+    println!("Hello, world! {:#?}", state.keys());
+    let new_block = Block {
+        header: "new_block_header".to_string(),
+        transactions: vec![],
+        receipts: vec![],
+    };
+    drop(state); // Release read lock before acquiring write lock
+    let mut new_state = STATE.write().unwrap();
+    new_state.insert("0x01".to_string(), new_block);
+    drop(new_state);
+    let mut new_block2 = STATE.write().unwrap();
+    new_block2.insert("0x02".to_string(), Block {
+        header: "another_block_header".to_string(),
+        transactions: vec![],
+        receipts: vec![],
+    });
+    drop(new_block2);
+    let state = STATE.read().unwrap();
+    println!("Hello, world! {:#?}", state.keys());
 }
