@@ -1,5 +1,6 @@
 use std::collections::HashMap;
-use std::sync::{LazyLock, RwLock};
+use std::sync::{LazyLock};
+use tokio::sync::RwLock;
 
 struct Transaction {
     from: String,
@@ -87,8 +88,9 @@ fn consensus_mechanism(){
     todo!()
 }
 
-fn main() {
-    let state = STATE.read().unwrap();
+#[tokio::main]
+async fn main() {
+    let state = STATE.read().await;
     println!("Hello, world! {:#?}", state.keys());
     let new_block = Block {
         header: "new_block_header".to_string(),
@@ -96,16 +98,16 @@ fn main() {
         receipts: vec![],
     };
     drop(state); // Release read lock before acquiring write lock
-    let mut new_state = STATE.write().unwrap();
+    let mut new_state = STATE.write().await;
     new_state.insert("0x01".to_string(), new_block);
     drop(new_state);
-    let mut new_block2 = STATE.write().unwrap();
+    let mut new_block2 = STATE.write().await;
     new_block2.insert("0x02".to_string(), Block {
         header: "another_block_header".to_string(),
         transactions: vec![],
         receipts: vec![],
     });
     drop(new_block2);
-    let state = STATE.read().unwrap();
+    let state = STATE.read().await;
     println!("Hello, world! {:#?}", state.keys());
 }
